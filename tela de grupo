@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Grupo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #7367f0, #43a047);
+        }
+        
+        .container {
+            position: relative;
+            width: 500px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        p {
+            margin-bottom: 25px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            outline: none;
+            font-size: 15px;
+            background: transparent;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: #7367f0;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5d52d8;
+        }
+        
+        .success-message {
+            color: #43a047;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .group-members {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .member-item:last-child {
+            border-bottom: none;
+        }
+        
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            width: auto;
+            margin-top: 0;
+        }
+        
+        .remove-btn:hover {
+            background: #d32f2f;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciar Grupo</h1>
+        <p>Crie ou edite seu grupo, adicione membros e defina permissões.</p>
+        
+        <div id="group-form">
+            <input type="text" id="group-name" placeholder="Nome do Grupo" required>
+            <select id="group-type">
+                <option value="" disabled selected>Tipo de Grupo</option>
+                <option value="trabalho">Trabalho</option>
+                <option value="estudo">Estudo</option>
+                <option value="projeto">Projeto</option>
+                <option value="outro">Outro</option>
+            </select>
+            
+            <h3 style="text-align: left; margin: 15px 0 10px 0;">Membros do Grupo</h3>
+            <div class="group-members" id="members-list">
+                <div class="member-item">
+                    <span>maria@email.com (Administrador)</span>
+                    <button class="remove-btn" disabled>Admin</button>
+                </div>
+                <div class="member-item">
+                    <span>joao@email.com</span>
+                    <button class="remove-btn">Remover</button>
+                </div>
+                <div class="member-item">
+                    <span>ana@email.com</span>
+                    <button class="remove-btn">Remover</button>
+                </div>
+            </div>
+            
+            <input type="email" id="new-member" placeholder="E-mail do novo membro">
+            <button id="add-member-btn">Adicionar Membro</button>
+            
+            <button id="save-group-btn" style="margin-top: 20px;">Salvar Grupo</button>
+            <p class="success-message" id="success-msg">Grupo salvo com sucesso!</p>
+        </div>
+        
+        <button id="back-btn">Voltar</button>
+    </div>
+
+    <script>
+        // Adicionar membro ao grupo
+        document.getElementById('add-member-btn').addEventListener('click', function() {
+            const email = document.getElementById('new-member').value;
+            
+            if (!email) {
+                alert('Por favor, informe o e-mail do novo membro!');
+                return;
+            }
+            
+            const membersList = document.getElementById('members-list');
+            
+            // Criar novo elemento de membro
+            const memberItem = document.createElement('div');
+            memberItem.className = 'member-item';
+            
+            const memberSpan = document.createElement('span');
+            memberSpan.textContent = email;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.textContent = 'Remover';
+            
+            // Adicionar evento para remover membro
+            removeBtn.addEventListener('click', function() {
+                membersList.removeChild(memberItem);
+            });
+            
+            memberItem.appendChild(memberSpan);
+            memberItem.appendChild(removeBtn);
+            
+            membersList.appendChild(memberItem);
+            
+            // Limpar campo de e-mail
+            document.getElementById('new-member').value = '';
+        });
+        
+        // Remover membros existentes
+        document.querySelectorAll('.remove-btn').forEach(function(btn) {
+            if (!btn.disabled) {
+                btn.addEventListener('click', function() {
+                    const memberItem = this.parentElement;
+                    document.getElementById('members-list').removeChild(memberItem);
+                });
+            }
+        });
+        
+        // Salvar grupo
+        document.getElementById('save-group-btn').addEventListener('click', function() {
+            const groupName = document.getElementById('group-name').value;
+            const groupType = document.getElementById('group-type').value;
+            
+            if (!groupName) {
+                alert('Por favor, informe o nome do grupo!');
+                return;
+            }
+            
+            if (!groupType) {
+                alert('Por favor, selecione o tipo do grupo!');
+                return;
+            }
+            
+            // Exibe a mensagem de sucesso
+            document.getElementById('success-msg').style.display = 'block';
+            
+            // Após 2 segundos, esconde a mensagem
+            setTimeout(function() {
+                document.getElementById('success-msg').style.display = 'none';
+            }, 2000);
+        });
+
+        document.getElementById('back-btn').addEventListener('click', function() {
+            // Redirecionamento para uma página anterior
+            alert('Voltar para a página principal');
+            // window.location.href = 'pagina-principal.html';
+        });
+    </script>
+</body>
+</html>
