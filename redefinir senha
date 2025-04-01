@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #7367f0, #43a047);
+        }
+        
+        .container {
+            position: relative;
+            width: 500px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        p {
+            margin-bottom: 25px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            outline: none;
+            font-size: 15px;
+            background: transparent;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: #7367f0;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5d52d8;
+        }
+        
+        .success-message {
+            color: #43a047;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Redefinir Senha</h1>
+        <p>Digite seu endereço de e-mail e enviaremos um link para redefinir sua senha.</p>
+        
+        <div id="reset-form">
+            <input type="email" id="email" placeholder="E-mail" required>
+            <button id="reset-btn">Enviar link de redefinição</button>
+            <p class="success-message" id="success-msg">Link enviado com sucesso! Verifique seu e-mail.</p>
+        </div>
+        
+        <button id="login-btn">Voltar para o Login</button>
+    </div>
+
+    <script>
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                alert('Por favor, informe seu e-mail!');
+                return;
+            }
+            
+            // Exibe a mensagem de sucesso
+            document.getElementById('success-msg').style.display = 'block';
+            document.getElementById('email').value = '';
+            
+            // Após 3 segundos, redireciona para a página de login
+            setTimeout(function() {
+                window.location.href = 'lololo.html';
+            }, 3000);
+        });
+
+        document.getElementById('login-btn').addEventListener('click', function() {
+            // Redireciona para a página de login
+            window.location.href = 'lololo.html';
+        });
+    </script>
+</body>
+</html>
