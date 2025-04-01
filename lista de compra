@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #7367f0, #43a047);
+        }
+        .container {
+            position: relative;
+            width: 500px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        p {
+            margin-bottom: 25px;
+            color: #666;
+            line-height: 1.5;
+        }
+        .add-item {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            outline: none;
+            font-size: 15px;
+            background: transparent;
+        }
+        input[type="number"] {
+            width: 80px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        select {
+            padding: 12px;
+            margin-left: 10px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            outline: none;
+            background: transparent;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: #7367f0;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .add-btn {
+            margin-left: 10px;
+            width: 50px;
+        }
+        button:hover {
+            background: #5d52d8;
+        }
+        .success-message {
+            color: #43a047;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+        .items-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: left;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        .item-name {
+            margin-left: 10px;
+            flex: 1;
+        }
+        .item-qty {
+            width: 45px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        .item-category {
+            color: #666;
+            font-size: 14px;
+            margin-right: 10px;
+            width: 100px;
+            text-align: right;
+        }
+        .actions {
+            display: flex;
+        }
+        .item-check {
+            transform: scale(1.5);
+            margin-right: 15px;
+        }
+        .remove-btn {
+            background: #f44336;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+        .remove-btn:hover {
+            background: #d32f2f;
+        }
+        .checked {
+            text-decoration: line-through;
+            color: #999;
+        }
+        .category-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .export-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+            .item-category {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Compras</h1>
+        <p>Adicione itens à sua lista de compras e organize por categorias.</p>
+        <div class="add-item">
+            <input type="number" id="item-qty" placeholder="Qtd" min="1" value="1">
+            <input type="text" id="item-name" placeholder="Nome do item" required>
+            <select id="item-category">
+                <option value="Alimentos">Alimentos</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Limpeza">Limpeza</option>
+                <option value="Higiene">Higiene</option>
+                <option value="Outros">Outros</option>
+            </select>
+            <button class="add-btn" id="add-btn">+</button>
+        </div>
+        <div class="category-filter">
+            <select id="filter-category">
+                <option value="Todos">Todos os itens</option>
+                <option value="Alimentos">Alimentos</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Limpeza">Limpeza</option>
+                <option value="Higiene">Higiene</option>
+                <option value="Outros">Outros</option>
+            </select> 
+            <button id="clear-checked-btn">Limpar marcados</button>
+        </div>
+        <div class="items-container" id="items-list">
+            <!-- Itens de exemplo -->
+            <div class="item">
+                <div class="item-info">
+                    <input type="checkbox" class="item-check">
+                    <span class="item-qty">2</span>
+                    <span class="item-name">Arroz</span>
+                    <span class="item-category">Alimentos</span>
+                </div>
+                <div class="actions">
+                    <button class="remove-btn">×</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-info">
+                    <input type="checkbox" class="item-check" checked>
+                    <span class="item-qty">1</span>
+                    <span class="item-name checked">Sabão em pó</span>
+                    <span class="item-category">Limpeza</span>
+                </div>
+                <div class="actions">
+                    <button class="remove-btn">×</button>
+                </div>
+            <div>
+            <div class="item">
+                <div class="item-info">
+                    <input type="checkbox" class="item-check">
+                    <span class="item-qty">6</span>
+                    <span class="item-name">Água mineral</span>
+                    <span class="item-category">Bebidas</span>
+                </div>
+                <div class="actions">
+                    <button class="remove-btn">×</button>
+                </div>
+            </div>
+        </div>
+        <div id="summary">
+            <p>Total de itens: <strong id="total-count">3</strong></p>
+            <p>Itens marcados: <strong id="checked-count">1</strong></p>
+        </div>
+        <button class="export-btn" id="export-btn">Exportar Lista</button>
+        <p class="success-message" id="success-msg">Lista exportada com sucesso!</p>
+    </div>
+    <script>
+        // Adicionar novo item à lista
+        document.getElementById('add-btn').addEventListener('click', function() {
+            addNewItem();
+        });
+        // Também adicionar item quando pressionar Enter no campo de nome
+        document.getElementById('item-name').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addNewItem();
+            }
+        });
+        function addNewItem() {
+            const itemName = document.getElementById('item-name').value;
+            const itemQty = document.getElementById('item-qty').value || '1';
+            const itemCategory = document.getElementById('item-category').value;
+            if (!itemName) {
+                alert('Por favor, informe o nome do item!');
+                return;
+            }
+            const itemsList = document.getElementById('items-list');
+            // Criar novo elemento de item
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            // Estrutura do item
+            itemDiv.innerHTML = `
+                <div class="item-info">
+                    <input type="checkbox" class="item-check">
+                    <span class="item-qty">${itemQty}</span>
+                    <span class="item-name">${itemName}</span>
+                    <span class="item-category">${itemCategory}</span>
+                </div>
+                <div class="actions">
+                    <button class="remove-btn">×</button>
+                </div>
+            `;
+            // Adicionar event listeners para o novo item
+            const checkbox = itemDiv.querySelector('.item-check');
+            checkbox.addEventListener('change', function() {
+                const itemName = this.parentElement.querySelector('.item-name');
+                if (this.checked) {
+                    itemName.classList.add('checked');
+                } else {
+                    itemName.classList.remove('checked');
+                }
+                updateSummary();
+            });
+            const removeBtn = itemDiv.querySelector('.remove-btn');
+            removeBtn.addEventListener('click', function() {
+                itemsList.removeChild(itemDiv);
+                updateSummary();
+            });
+            // Adicionar o novo item à lista
+            itemsList.appendChild(itemDiv);
+            // Limpar campos
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-qty').value = '1';
+            document.getElementById('item-name').focus();
+            // Atualizar contadores
+            updateSummary();
+        }
+        // Filtrar por categoria
+        document.getElementById('filter-category').addEventListener('change', function() {
+            const category = this.value;
+            const items = document.querySelectorAll('.item');
+            items.forEach(function(item) {
+                const itemCategory = item.querySelector('.item-category').textContent;
+                if (category === 'Todos' || category === itemCategory) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        // Limpar itens marcados
+        document.getElementById('clear-checked-btn').addEventListener('click', function() {
+            const checkedItems = document.querySelectorAll('.item-check:checked');
+            checkedItems.forEach(function(checkbox) {
+                const item = checkbox.closest('.item');
+                item.parentNode.removeChild(item);
+            });
+            updateSummary();
+        });
+        // Adicionar eventos para checkboxes iniciais
+        document.querySelectorAll('.item-check').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const itemName = this.parentElement.querySelector('.item-name');
+                if (this.checked) {
+                    itemName.classList.add('checked');
+                } else {
+                    itemName.classList.remove('checked');
+                }
+                updateSummary();
+            });
+        });
+        // Adicionar eventos para botões de remover iniciais
+        document.querySelectorAll('.remove-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.item');
+                item.parentNode.removeChild(item);
+                updateSummary();
+            });
+        });
+        // Exportar lista
+        document.getElementById('export-btn').addEventListener('click', function() {
+            // Aqui poderia ter lógica para exportar para PDF, e-mail, etc.
+            document.getElementById('success-msg').style.display = 'block';
+            setTimeout(function() {
+                document.getElementById('success-msg').style.display = 'none';
+            }, 2000);
+        });
+        // Função para atualizar o resumo
+        function updateSummary() {
+            const totalItems = document.querySelectorAll('.item').length;
+            const checkedItems = document.querySelectorAll('.item-check:checked').length;
+            
+            document.getElementById('total-count').textContent = totalItems;
+            document.getElementById('checked-count').textContent = checkedItems;
+        }
+    </script>
+</body>
+</html>
